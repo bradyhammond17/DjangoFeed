@@ -1,5 +1,4 @@
 from os import stat
-from socket import send_fds
 from django.dispatch import receiver
 from django.shortcuts import render, redirect
 from .forms import PostForm,ProfileForm, RelationshipForm
@@ -88,7 +87,7 @@ def friendsfeed(request):
         post_to_like = request.POST.get("like")
         print(post_to_like)
         like_already_exists = Like.objects.filter(post_id=post_to_like,username=request.user)
-        if not like_already_exists():
+        if not like_already_exists.exists():
             Like.objects.create(post_id=post_to_like,username=request.user)
             return redirect("FeedApp:friendsfeed")
 
@@ -137,7 +136,7 @@ def friends(request):
 
 
     if request.method == 'POST' and request.POST.get("receive_requests"):
-        senders = request.POST.getlist("friend_requests")
+        senders = request.POST.getlist("receive_requests")
         for sender in senders:
             Relationship.objects.filter(id=sender).update(status='accepted')
 
@@ -148,5 +147,5 @@ def friends(request):
 
     context = {'user_friends_profiles':user_friends_profiles,'user_relationships':user_relationships,
                     'all_profiles':all_profiles,'request_received_profiles':request_received_profiles}
-                    
+
     return render(request, 'FeedApp/friends.html', context)
