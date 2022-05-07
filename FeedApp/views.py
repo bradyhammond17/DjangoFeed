@@ -51,3 +51,35 @@ def myfeed(request):
 
     context = {'posts' : posts, 'zipped_list' : zipped_list}
     return render(request, 'FeedApp/myfeed.html', context)
+
+
+
+@login_required
+def new_post(request):
+    if request.method != 'POST':
+        form = PostForm()
+    else:
+        form = PostForm(request.POST,request.FILES)
+        if form.is_valid():
+            new_post = form.save(commit=False)
+            new_post.username = request.user
+            new_post.save()
+            return redirect('FeedApp:myfeed')
+
+    context = {'form':form}
+    return render(request, 'FeedApp/new_post.html', context)
+
+
+
+@login_required
+def comments(request, post_id):
+    if request.method == 'POST' and request.POST.get("btn1"):
+        comment = request.POST.get("comment")
+        Comment.objects.create(post_id=post_id, username=request.user, text=comment, date_added=date.today())
+
+    comments = Comment.objects.filter(post=post_id)
+    post = Post.objects.get(id=post_id)
+
+    context = {'post':post, 'comments':comments}
+
+    return render(request, 'FeedApp/comments.html', context)

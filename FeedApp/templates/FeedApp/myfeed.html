@@ -5,6 +5,8 @@
 
 <h1><p>My Posts</p></h1>
 
+<h3><a href="{% url 'FeedApp:new_post' %}">Add a new post</a></h3>
+
 <table style="font-size: 25px;width: 100%;">
 
     {% for p,c,l in zipped_list %}
@@ -18,7 +20,7 @@
         <tr style="border: 1px solid black;padding: 6px;">
             <td> {{p.date_posted}}</td>
             <td>Likes: &nbsp {{l}} &nbsp&nbsp&nbsp</td>
-            <td>Comments: &nbsp {{c}} &nbsp&nbsp</td>
+            <td>Comments: &nbsp <a href="{% url 'FeedApp:comments' p.id %}">{{c}}</a>&nbsp&nbsp</td>
         </tr>
     {% endfor %}
 
